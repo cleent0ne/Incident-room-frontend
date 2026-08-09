@@ -3774,6 +3774,10 @@ input[type='date']:focus-visible {
     display: none;
   }
 
+  .nav-actions {
+    margin-left: auto;
+  }
+
   .nav-toggle {
     display: inline-flex;
   }
