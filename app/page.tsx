@@ -214,11 +214,11 @@ export default function HomePage() {
       <div className="home-hero">
         <div>
           <h1 className="home-hero-title">
-            Debug production outages under real on-call conditions.
+            Build on-call instincts before you need them.
           </h1>
           <p className="home-hero-lead">
-            No mocks or dummy slides. Real service topologies, live log streams, and cascading system failures.
-            Inspect telemetry, isolate the root cause, and execute the fix under pressure.
+            Every scenario runs on real service topologies with live telemetry and failures that cascade like the real
+            thing. Diagnose fast, fix under pressure, and walk away sharper than you started.
           </p>
           <div className="home-hero-actions">
             <Link className="home-hero-btn-primary" href="/scenarios">
