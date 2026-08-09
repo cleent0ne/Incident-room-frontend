@@ -10,6 +10,7 @@ source-verified backend contract. This package is **M0 — Foundations**.
   cookie to `Path=/api/v1/auth`, so the frontend origin must serve requests at the
   identical `/api/v1/...` path (no `/api/proxy` prefix) or the refresh cookie is never
   attached and refresh/logout silently break.
+  
 - **`lib/api.ts`** — the fetch wrapper. Treats any `2xx` as success (register is 202,
   start-attempt is 201, several PATCHes are 204 — all success, none special-cased).
   Parses the `{ code, message, timestamp?, correlationId?, fieldErrors? }` error
@@ -435,5 +436,6 @@ components. Nothing here should need to be torn out later; M1+ will import from
 - `resolve()` and `takeAction()` are idempotent — safe to retry on flaky networks,
   including double-submits from slow UI disabling.
 - Leaderboard `size` has no server-side cap — clamp it client-side (M3).
-#   I n c i d e n t - r o o m - f r o n t e n d  
+#   I n c i d e n t - r o o m - f r o n t e n d 
+ 
  
