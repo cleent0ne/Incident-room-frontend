@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { post, ApiError } from '@/lib/api';
 import { fieldErrorMap } from '@/lib/form-errors';
+import { useAuth, type AuthUser } from '@/lib/auth-context';
 import { OAuthButtons } from '@/components/auth/oauth-buttons';
 import { IconBolt, IconFlame, IconMail, IconLock, IconUser, IconRadio } from '@/components/ui/icons';
 
@@ -19,6 +20,7 @@ import { IconBolt, IconFlame, IconMail, IconLock, IconUser, IconRadio } from '@/
  */
 export default function RegisterPage() {
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,9 +38,10 @@ export default function RegisterPage() {
       await post('/api/v1/auth/register', { email, password, displayName });
       // Bypassing email verification: auto-login immediately after register
       try {
-        await post('/api/v1/auth/login', { email, password });
-        router.push('/');
+        const user = await post<AuthUser>('/api/v1/auth/login', { email, password });
+        setUser(user);
         router.refresh();
+        router.push('/');
       } catch {
         router.push(`/login?registered=true&email=${encodeURIComponent(email)}`);
       }

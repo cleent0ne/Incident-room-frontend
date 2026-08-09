@@ -46,6 +46,7 @@ function LoginForm() {
     try {
       const user = await post<AuthUser>('/api/v1/auth/login', { email, password });
       setUser(user);
+      router.refresh();
       const next = searchParams.get('next');
       router.push(next && next.startsWith('/') ? next : '/');
     } catch (err) {
