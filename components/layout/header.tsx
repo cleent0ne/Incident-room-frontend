@@ -8,6 +8,7 @@ import { Avatar } from '@/components/profile/avatar';
 import {
   IconBolt,
   IconChevronDown,
+  IconClock,
   IconFlame,
   IconLogout,
   IconMenu,
@@ -64,9 +65,13 @@ export function Header() {
     <header className="site-header">
       <div className="shell topbar">
         <Link className="nav-logo" href="/">
+          <span className="nav-logo-mark">
+            <IconBolt size={15} />
+          </span>
           <span className="brand">
             Incident <b>Room</b>
           </span>
+          <span className="nav-status-dot" aria-hidden="true" title="Systems nominal" />
         </Link>
 
         <nav className="nav-links">
@@ -75,12 +80,12 @@ export function Header() {
         </nav>
 
         <div className="nav-actions">
-          {user && (
+          {user ? (
             <>
               {user.currentStreak > 0 && (
                 <span className="nav-streak" title={`${user.currentStreak}-day streak`}>
-                  <IconFlame size={12} />
-                  {user.currentStreak}
+                  <IconFlame size={13} />
+                  <span>{user.currentStreak}</span>
                 </span>
               )}
               <div className="nav-user" ref={menuRef}>
@@ -130,17 +135,18 @@ export function Header() {
                 )}
               </div>
             </>
-          )}
-
-          {user === null && (
-            <>
-              <Link className="text-btn" href="/login">
+          ) : (
+            <div className="nav-auth-group">
+              <Link className="nav-login-btn" href="/login">
                 Log in
               </Link>
-              <Link className="button primary" href="/register">
-                Get started
+              <Link className="nav-register-btn" href="/register">
+                <span>Get started</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
               </Link>
-            </>
+            </div>
           )}
 
           <button
@@ -157,36 +163,38 @@ export function Header() {
 
       <div className={`nav-drawer${drawerOpen ? ' open' : ''}`}>
         <NavLink href="/scenarios" onClick={() => setDrawerOpen(false)}>
-          Scenarios
+          <IconBolt size={15} /> Scenarios
         </NavLink>
         <NavLink href="/daily" onClick={() => setDrawerOpen(false)}>
-          Daily
+          <IconClock size={15} /> Daily
         </NavLink>
         {user && (
           <NavLink href="/profile" onClick={() => setDrawerOpen(false)}>
-            Profile
+            <IconUser size={15} /> Profile
           </NavLink>
         )}
         {user?.role === 'ADMIN' && (
           <NavLink href="/admin" onClick={() => setDrawerOpen(false)}>
-            Admin
+            <IconShield size={15} /> Admin
           </NavLink>
         )}
-        {user === null && (
+        {user ? (
           <div className="nav-drawer-actions">
-            <Link className="button outline" href="/login" onClick={() => setDrawerOpen(false)}>
-              Log in
-            </Link>
-            <Link className="button primary" href="/register" onClick={() => setDrawerOpen(false)}>
-              Get started
-            </Link>
-          </div>
-        )}
-        {user && (
-          <div className="nav-drawer-actions">
-            <button className="button outline" type="button" onClick={handleLogout}>
+            <button className="nav-drawer-logout" type="button" onClick={handleLogout}>
               Log out
             </button>
+          </div>
+        ) : (
+          <div className="nav-drawer-actions">
+            <Link className="nav-login-btn" href="/login" onClick={() => setDrawerOpen(false)}>
+              Log in
+            </Link>
+            <Link className="nav-register-btn" href="/register" onClick={() => setDrawerOpen(false)}>
+              <span>Get started</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </Link>
           </div>
         )}
       </div>

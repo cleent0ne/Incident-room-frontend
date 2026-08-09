@@ -536,11 +536,11 @@ function ProfileContent() {
                       </div>
                       {filteredContent.map((attempt) => (
                         <Link className="lb-row" href={attemptHref(attempt)} key={attempt.attemptId} style={{ textDecoration: 'none' }}>
-                          <span className="lb-row__score mono">{attempt.status === 'COMPLETED' ? attempt.finalScore : '—'}</span>
-                          <span className="lb-row__name">{attempt.scenarioTitle ?? <span className="mono" style={{ color: 'var(--faint)' }}>Deleted scenario</span>}</span>
-                          <span style={{ color: STATUS_COLOR[attempt.status], fontSize: 13, fontWeight: 500 }}>{STATUS_LABEL[attempt.status]}</span>
-                          <span className="lb-row__time mono">{attempt.elapsedSeconds != null ? formatElapsed(attempt.elapsedSeconds) : '—'}</span>
-                          <span className="lb-row__date mono">{formatDate(attempt.startedAt)}</span>
+                          <span className="lb-row__score mono" data-label="Score">{attempt.status === 'COMPLETED' ? attempt.finalScore : '—'}</span>
+                          <span className="lb-row__name" data-label="Scenario">{attempt.scenarioTitle ?? <span className="mono" style={{ color: 'var(--faint)' }}>Deleted scenario</span>}</span>
+                          <span data-label="Status" style={{ color: STATUS_COLOR[attempt.status], fontSize: 13, fontWeight: 500 }}>{STATUS_LABEL[attempt.status]}</span>
+                          <span className="lb-row__time mono" data-label="Time">{attempt.elapsedSeconds != null ? formatElapsed(attempt.elapsedSeconds) : '—'}</span>
+                          <span className="lb-row__date mono" data-label="Started">{formatDate(attempt.startedAt)}</span>
                         </Link>
                       ))}
                     </div>

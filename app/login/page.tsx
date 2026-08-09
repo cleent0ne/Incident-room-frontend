@@ -54,11 +54,11 @@ function LoginForm() {
         return;
       }
       if (err instanceof ApiError && err.is('INVALID_CREDENTIALS')) {
-        setFormError('Incorrect email or password.');
+        setFormError(err.message || 'Incorrect email or password.');
       } else if (err instanceof ApiError && err.is('RATE_LIMITED')) {
         setFormError('Too many attempts — slow down and try again in a moment.');
       } else {
-        setFormError('Could not log in. Try again.');
+        setFormError(err instanceof ApiError && err.message ? err.message : 'Could not log in. Try again.');
       }
       setSubmitting(false);
     }

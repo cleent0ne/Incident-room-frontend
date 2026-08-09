@@ -34,9 +34,18 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       await post('/api/v1/auth/register', { email, password, displayName });
-      router.push(`/verify-email?email=${encodeURIComponent(email)}&justRegistered=true`);
+      // Bypassing email verification: auto-login immediately after register
+      try {
+        await post('/api/v1/auth/login', { email, password });
+        router.push('/');
+        router.refresh();
+      } catch {
+        router.push(`/login?registered=true&email=${encodeURIComponent(email)}`);
+      }
     } catch (err) {
-      if (err instanceof ApiError && err.is('VALIDATION_FAILED')) {
+      if (err instanceof ApiError && (err.is('CONFLICT') || err.status === 409)) {
+        setFormError('An account with this email already exists. Please log in instead.');
+      } else if (err instanceof ApiError && err.is('VALIDATION_FAILED')) {
         setFieldErrors(fieldErrorMap(err.fieldErrors));
         setFormError(null);
       } else if (err instanceof ApiError && err.is('RATE_LIMITED')) {

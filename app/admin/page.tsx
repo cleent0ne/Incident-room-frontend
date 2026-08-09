@@ -371,7 +371,7 @@ function AdminConsole() {
                 </div>
                 {filteredScenarios.map((entry) => (
                   <div className="tr" key={entry.id} style={{ gridTemplateColumns: ROW_COLUMNS }}>
-                    <span>
+                    <span className="tr-cell tr-cell--check">
                       {!entry.published && (
                         <input
                           type="checkbox"
@@ -381,17 +381,17 @@ function AdminConsole() {
                         />
                       )}
                     </span>
-                    <span>
+                    <span className="tr-cell tr-cell--title">
                       <strong>{entry.title}</strong>
                       <br />
                       <span className="mono" style={{ color: 'var(--dim)', fontSize: 12 }}>{entry.slug}</span>
                     </span>
-                    <span>
+                    <span className="tr-cell" data-label="Status">
                       <span className={entry.published ? 'status-badge published' : 'status-badge draft'}>
                         {entry.published ? 'Published' : 'Draft'}
                       </span>
                     </span>
-                    <span>
+                    <span className="tr-cell" data-label="Publish">
                       <button
                         className="button outline"
                         disabled={busyId === entry.id}
@@ -400,7 +400,7 @@ function AdminConsole() {
                         {busyId === entry.id ? 'Working…' : (entry.published ? 'Unpublish' : 'Publish')}
                       </button>
                     </span>
-                    <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <span className="tr-cell" data-label="Daily date" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                       <input
                         type="date"
                         value={dailyDates[entry.id] ?? entry.dailyDate ?? ''}

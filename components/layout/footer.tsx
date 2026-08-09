@@ -31,7 +31,6 @@ export function Footer() {
             <span className="site-footer__heading">Platform</span>
             <Link href="/scenarios" className="site-footer__link">Browse Incidents</Link>
             <Link href="/play?daily=true" className="site-footer__link">Daily Challenge</Link>
-            <Link href="/profile" className="site-footer__link">My Profile</Link>
           </div>
           <div className="site-footer__col">
             <span className="site-footer__heading">Legal</span>

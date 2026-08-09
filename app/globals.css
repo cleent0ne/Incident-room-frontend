@@ -867,7 +867,10 @@ h3 {
   align-items: center;
   gap: 20px;
   position: sticky;
-  top: 0;
+  /* .site-header is also sticky at top:0 (64px tall) — without this offset
+     play-header would stick to the exact same spot and get hidden behind it
+     on scroll instead of docking neatly underneath. */
+  top: 64px;
   background: var(--void);
   z-index: 4;
 }
@@ -875,6 +878,23 @@ h3 {
 .timer {
   margin-left: auto;
   color: var(--signal);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(131, 168, 28, 0.1);
+  border: 1px solid rgba(131, 168, 28, 0.28);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.timer.warn {
+  background: rgba(255, 209, 102, 0.1);
+  border-color: rgba(255, 209, 102, 0.35);
+}
+
+.timer.over {
+  background: rgba(255, 92, 92, 0.1);
+  border-color: rgba(255, 92, 92, 0.35);
 }
 
 .play-grid {
@@ -901,13 +921,17 @@ h3 {
 }
 
 .telemetry {
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   background: transparent;
   padding: 14px 18px;
   display: grid;
   grid-template-columns: 42px 1fr;
   gap: 10px;
   animation: telemetry-in 0.7s ease-out;
+}
+
+.telemetry:last-child {
+  border-bottom: none;
 }
 
 .telemetry time {
@@ -1017,7 +1041,11 @@ h3 {
   justify-content: space-between;
   gap: 10px;
   transform: scale(1);
-  transition: transform 0.1s ease;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.action:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .action:active:not(:disabled) {
@@ -1054,6 +1082,12 @@ h3 {
   width: calc(100% - 20px);
   border: 1px solid var(--line2);
   border-radius: 4px;
+  transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.action.remedy:hover:not(:disabled) {
+  border-color: var(--signal);
+  background: rgba(131, 168, 28, 0.06);
 }
 
 .confirm-dialog {
@@ -1074,9 +1108,14 @@ h3 {
 }
 
 .progress-signal {
+  display: inline-block;
   color: var(--faint);
-  font: 12px var(--font-dm-mono), 'DM Mono';
-  margin-top: 10px;
+  font: 11px var(--font-dm-mono), 'DM Mono';
+  margin: 10px 0 0 18px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line2);
 }
 
 .timer.warn {
@@ -1231,6 +1270,9 @@ h3 {
   top: calc(100% + 6px);
   right: 0;
   min-width: 200px;
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--panel);
   border: 1px solid var(--line2);
   border-radius: 6px;
@@ -1242,6 +1284,21 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(131, 168, 28, 0.35) transparent;
+}
+
+.custom-dropdown__menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-dropdown__menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-dropdown__menu::-webkit-scrollbar-thumb {
+  background: rgba(131, 168, 28, 0.35);
+  border-radius: 4px;
 }
 
 .custom-dropdown__item {
@@ -1657,13 +1714,104 @@ h3 {
     border-left: 0;
   }
 
+  /* Admin scenario table -> stacked cards. The inline gridTemplateColumns
+     style from ROW_COLUMNS wins on specificity over a plain class rule, so
+     this has to be !important to actually take over on mobile. */
   .tr {
-    grid-template-columns: 28px 1fr 55px;
+    grid-template-columns: 1fr !important;
+    gap: 6px;
   }
 
-  .tr>*:nth-child(4),
-  .tr>*:nth-child(5) {
+  .table {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+
+  .tr:not(.head) {
+    background: var(--panel);
+    border: 1px solid var(--line2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+
+  .tr.head {
     display: none;
+  }
+
+  .tr-cell--check:empty {
+    display: none;
+  }
+
+  .tr [data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font: 10px var(--font-dm-mono), 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    margin-bottom: 4px;
+  }
+
+  .admin-row-error {
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+
+  /* Leaderboard / attempt-history rows -> stacked cards */
+  .lb-row {
+    grid-template-columns: 1fr !important;
+    gap: 4px;
+  }
+
+  .lb-row:not(.lb-row--head) {
+    padding: 14px 16px;
+  }
+
+  .lb-row--head {
+    display: none;
+  }
+
+  .lb-row [data-label]::before {
+    content: attr(data-label);
+    display: inline-block;
+    min-width: 64px;
+    color: var(--faint);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-right: 6px;
+  }
+
+  /* Profile hero + stat strip */
+  .profile-hero-card {
+    padding: 22px 18px;
+  }
+
+  .profile-header {
+    flex-wrap: wrap;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .stat-block {
+    padding: 12px 8px;
+  }
+
+  .stat-block strong {
+    font-size: 20px;
+  }
+
+  .admin-console-hero {
+    padding: 20px 16px;
+  }
+
+  .admin-search-input {
+    width: 100%;
   }
 
   .score {
@@ -1672,6 +1820,26 @@ h3 {
 
   .score strong {
     font-size: 30px;
+  }
+}
+
+@media (max-width: 420px) {
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stats-row .stat-block:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .lb-row__name {
+    flex-wrap: wrap;
   }
 }
 
@@ -2264,6 +2432,79 @@ select:focus-visible {
   color: var(--bad);
   font-size: 12px;
   line-height: 1.5;
+}
+
+/* ============================================================
+   Admin — scenario table (.table / .tr were previously referenced
+   by app/admin/page.tsx and the profile skeleton but never styled;
+   rows only had ad-hoc inline grid-template-columns with nothing to
+   turn them into an actual grid, borders, or spacing).
+   ============================================================ */
+
+.table {
+  border: 1px solid var(--line2);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.tr {
+  display: grid;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tr:last-child {
+  border-bottom: none;
+}
+
+.tr:not(.head):hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.tr.head {
+  color: var(--faint);
+  font: 11px var(--font-dm-mono), 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--line2);
+}
+
+.tr input[type='checkbox'] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--signal);
+}
+
+.tr input[type='date'] {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.skeleton-row {
+  height: 52px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.07) 37%,
+    rgba(255, 255, 255, 0.03) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }
 
 /* ============================================================
@@ -3506,6 +3747,22 @@ input[type='date']:focus-visible {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--ink);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.nav-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--good);
+  box-shadow: 0 0 0 0 rgba(43, 213, 118, 0.5);
+  animation: live-pulse 2.2s ease-out infinite;
+  margin-left: 2px;
 }
 
 .nav-drawer {
@@ -3525,30 +3782,83 @@ input[type='date']:focus-visible {
     display: none;
   }
 
-  .nav-drawer.open {
+  .nav-drawer {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    padding: 0 16px;
+    border-top: 1px solid transparent;
+    background: rgba(10, 11, 13, 0.97);
+    transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+  }
+
+  .nav-drawer.open {
+    max-height: 480px;
+    opacity: 1;
     padding: 10px 16px 18px;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(10, 11, 13, 0.96);
   }
 
   .nav-drawer .navlink {
-    padding: 11px 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 4px;
     font-size: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  .nav-drawer-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
+  .nav-drawer .navlink svg {
+    color: var(--faint);
+    flex-shrink: 0;
   }
 
-  .nav-drawer-actions .button {
-    flex: 1;
-    text-align: center;
+  .nav-drawer .navlink.active svg {
+    color: var(--signal);
+  }
+
+  .nav-drawer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .nav-drawer-actions .nav-login-btn,
+  .nav-drawer-actions .nav-register-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 11px 18px;
+    font-size: 14px;
+  }
+
+  .nav-drawer-logout {
+    width: 100%;
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dim);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-drawer-logout:hover {
+    color: var(--bad);
+    border-color: rgba(255, 92, 92, 0.3);
+    background: rgba(255, 92, 92, 0.07);
+  }
+}
+
+@media (max-width: 360px) {
+  .brand {
+    font-size: 15px;
   }
 }
 
@@ -3798,5 +4108,213 @@ input[type='date']:focus-visible {
     align-items: center;
     gap: 9px;
     margin-bottom: 28px;
+  }
+}
+
+/* ============================================================
+   Navbar Auth UI/UX & Responsive Redesign
+   ============================================================ */
+
+.nav-auth-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--dim);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-login-btn:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.nav-register-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 18px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #08090a;
+  background: linear-gradient(135deg, #b2f122 0%, #83a81c 100%);
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(131, 168, 28, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-register-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.nav-register-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 6px 24px rgba(131, 168, 28, 0.5);
+  filter: brightness(1.08);
+}
+
+.nav-register-btn:hover svg {
+  transform: translateX(2px);
+}
+
+.nav-register-btn:active {
+  transform: translateY(0) scale(1);
+}
+
+/* ============================================================
+   Generic Error Page & Boundaries Styling
+   ============================================================ */
+
+.error-page-shell {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: radial-gradient(circle at 50% 30%, rgba(255, 92, 92, 0.06) 0%, transparent 60%);
+}
+
+.error-card {
+  width: 100%;
+  max-width: 520px;
+  background: rgba(18, 20, 24, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 92, 92, 0.2);
+  border-radius: 18px;
+  padding: 40px 36px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.error-header-icon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 92, 92, 0.1);
+  border: 1px solid rgba(255, 92, 92, 0.3);
+  border-radius: 16px;
+  color: var(--bad);
+}
+
+.error-icon-glow {
+  position: absolute;
+  inset: -10px;
+  background: rgba(255, 92, 92, 0.15);
+  filter: blur(14px);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.error-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(255, 92, 92, 0.12);
+  border: 1px solid rgba(255, 92, 92, 0.25);
+  color: var(--bad);
+  font: 12px var(--font-dm-mono), 'DM Mono', monospace;
+  margin-bottom: 16px;
+}
+
+.error-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bad);
+  box-shadow: 0 0 8px var(--bad);
+}
+
+.error-card h1 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+
+.error-description {
+  font-size: 14.5px;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.error-correlation {
+  margin-bottom: 28px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+}
+
+.error-correlation-label {
+  color: var(--faint);
+}
+
+.error-correlation code {
+  color: var(--signal);
+  font-family: var(--font-dm-mono), monospace;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.error-actions .button {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.error-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+@media (max-width: 760px) {
+  .nav-auth-group {
+    display: none;
+  }
+
+  .error-card {
+    padding: 30px 20px;
+  }
+
+  .error-actions {
+    flex-direction: column;
+  }
+
+  .error-actions .button {
+    width: 100%;
   }
 }
