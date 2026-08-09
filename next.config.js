@@ -17,49 +17,16 @@ if (!BACKEND_BASE_URL) {
 
 /** @type {import('next').NextConfig['headers']} */
 async function securityHeaders() {
-  const isDev = process.env.NODE_ENV === 'development';
-
-  // Next.js dev mode (React Refresh / HMR) injects inline <script> tags and relies
-  // on eval() for hot-module replacement. Both are blocked by a strict script-src.
-  // In production neither mechanism exists, so we keep the tightest possible policy.
-  // If you later add a nonce-based CSP middleware you can drop these dev allowances.
-  const scriptSrc = isDev
-    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
-    : "script-src 'self'";
-
-  const cspDirectives = [
-    "default-src 'self'",
-    // Next.js requires 'unsafe-inline' for styles injected at runtime; nonces are the
-    // alternative but require server-side rendering of each page — revisit if moving to full SSR.
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
-    scriptSrc,
-    // Disallow all inline images from untrusted origins.
-    "img-src 'self' data: blob:",
-    // Allow backend API connections (same origin via Next.js rewrites; no explicit backend URL needed).
-    // In dev mode also allow webpack HMR websocket connections on localhost.
-    isDev ? "connect-src 'self' ws://localhost:* wss://localhost:*" : "connect-src 'self'",
-    // Disallow plugins (Flash, Java, etc.)
-    "object-src 'none'",
-    // Disallow embedding in iframes from any origin.
-    "frame-ancestors 'none'",
-    // Disallow web workers from untrusted sources.
-    "worker-src 'self'",
-    // Disallow manifest from untrusted origins.
-    "manifest-src 'self'",
-    // Block mixed content automatically (no-op in HTTP dev, effective in production HTTPS).
-    "upgrade-insecure-requests",
-  ].join('; ');
-
+  // NOTE: Content-Security-Policy is intentionally NOT set here. Next.js App
+  // Router injects inline bootstrap/streaming <script> tags at runtime that
+  // need a fresh nonce on every request — a static header from next.config.js
+  // can't do that. CSP now lives in middleware.ts, which generates a
+  // per-request nonce and applies it there instead.
   return [
     {
       // Apply these headers to all routes.
       source: '/(.*)',
       headers: [
-        {
-          key: 'Content-Security-Policy',
-          value: cspDirectives,
-        },
         {
           // Prevent clickjacking — the backend also sets this via Spring Security.
           key: 'X-Frame-Options',
@@ -121,4 +88,3 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-
