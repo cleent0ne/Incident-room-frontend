@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { Manrope, DM_Mono } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
@@ -48,7 +49,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Reading headers() here forces this layout to render dynamically, per
+  // request — required so Next.js has access to the per-request CSP nonce
+  // (set in middleware.ts) and can stamp it onto the inline bootstrap/RSC
+  // scripts and the chunk-loader script it renders. Without this, the page
+  // can get statically rendered with no nonce attached to those scripts,
+  // and 'strict-dynamic' then blocks all of them.
+  await headers();
+
   return (
     <html lang="en" className={`${manrope.variable} ${dmMono.variable}`}>
       <body>
