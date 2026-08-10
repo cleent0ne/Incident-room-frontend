@@ -1273,7 +1273,7 @@ h3 {
   max-height: 280px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: var(--panel);
+  background:#d5dae2fd;
   border: 1px solid var(--line2);
   border-radius: 6px;
   padding: 6px;
