@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { Manrope, DM_Mono } from 'next/font/google';
 import './globals.css';
+
 import { AuthProvider } from '@/lib/auth-context';
 import { ToastProvider } from '@/lib/toast-context';
 import { Header } from '@/components/layout/header';
@@ -23,25 +24,31 @@ const dmMono = DM_Mono({
   display: 'swap',
 });
 
-// SITE_URL is required for absolute URLs in metadataBase / OG tags / sitemap.xml /
-// robots.txt (all server-only — see .env.example). Falls back to localhost so `next
-// dev` without a configured .env.local doesn't crash, matching the BACKEND_BASE_URL
-// fallback pattern in next.config.js.
-const SITE_URL = process.env.SITE_URL ?? 'http://localhost:3000';
+const SITE_URL =
+  process.env.SITE_URL ?? 'http://localhost:3000';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+
   title: {
     default: 'Incident Room',
     template: '%s · Incident Room',
   },
+
   description: 'Learn incident response by running the room.',
+
+  // ✅ ADD THIS PART
+  verification: {
+    google: 'M-BkwG-6ju5O3VDbokiZa6K87KmYY2oyfPz740uPE-4',
+  },
+
   openGraph: {
     siteName: 'Incident Room',
     title: 'Incident Room',
     description: 'Learn incident response by running the room.',
     type: 'website',
   },
+
   twitter: {
     card: 'summary_large_image',
     title: 'Incident Room',
@@ -49,27 +56,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Reading headers() here forces this layout to render dynamically, per
-  // request — required so Next.js has access to the per-request CSP nonce
-  // (set in middleware.ts) and can stamp it onto the inline bootstrap/RSC
-  // scripts and the chunk-loader script it renders. Without this, the page
-  // can get statically rendered with no nonce attached to those scripts,
-  // and 'strict-dynamic' then blocks all of them.
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // Forces dynamic rendering for CSP nonce
   await headers();
 
   return (
-    <html lang="en" className={`${manrope.variable} ${dmMono.variable}`}>
+    <html
+      lang="en"
+      className={`${manrope.variable} ${dmMono.variable}`}
+    >
       <body>
         <AuthProvider>
           <ToastProvider>
             <Header />
-            <ClaimAttemptsToast />
             {children}
             <Footer />
+            <ClaimAttemptsToast />
+            <CrackOverlay />
           </ToastProvider>
         </AuthProvider>
-        <CrackOverlay />
       </body>
     </html>
   );
