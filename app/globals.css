@@ -1303,7 +1303,7 @@ h3 {
 
 .custom-dropdown__item {
   font: 12px var(--font-dm-mono), 'DM Mono', monospace;
-  color: var(--dim);
+  color:#08090a;
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
@@ -1319,7 +1319,7 @@ h3 {
 }
 
 .custom-dropdown__item--selected {
-  color: var(--signal);
+  color:#000;
   background: rgba(131, 168, 28, 0.08);
   font-weight: 600;
 }
