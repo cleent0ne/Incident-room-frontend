@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { post, ApiError } from '@/lib/api';
 import { fieldErrorMap } from '@/lib/form-errors';
-import { useAuth, type AuthUser } from '@/lib/auth-context';
 import { OAuthButtons } from '@/components/auth/oauth-buttons';
 import { IconBolt, IconFlame, IconMail, IconLock, IconUser, IconRadio } from '@/components/ui/icons';
 
@@ -14,13 +13,13 @@ import { IconBolt, IconFlame, IconMail, IconLock, IconUser, IconRadio } from '@/
  * (anti-enumeration): a brand-new email sends a verification code, an existing
  * *verified* account silently no-ops (no email, no error), and an existing
  * *unverified* account gets its password/display name updated and a fresh code sent
- * — all three look identical from here. So the success copy below is deliberately
- * generic ("check your email if it needs verifying") rather than "we sent a code" —
- * that would be a lie in the already-verified case.
+ * — all three look identical from here. So this always routes to /verify-email with
+ * the same generic "check your email if it needs verifying" framing (via
+ * justRegistered=true), rather than claiming "we sent a code" — that would be a lie
+ * in the already-verified case.
  */
 export default function RegisterPage() {
   const router = useRouter();
-  const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,18 +35,18 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       await post('/api/v1/auth/register', { email, password, displayName });
-      // Bypassing email verification: auto-login immediately after register
-      try {
-        const user = await post<AuthUser>('/api/v1/auth/login', { email, password });
-        setUser(user);
-        router.refresh();
-        router.push('/');
-      } catch {
-        router.push(`/login?registered=true&email=${encodeURIComponent(email)}`);
-      }
+      // Registration always leaves the account unverified (see AuthService.register /
+      // login's EMAIL_NOT_VERIFIED enforcement), so attempting an immediate login here
+      // would just 403 on every normal signup — go straight to the code-entry step
+      // instead of round-tripping through /login first.
+      router.push(`/verify-email?email=${encodeURIComponent(email)}&justRegistered=true`);
     } catch (err) {
       if (err instanceof ApiError && (err.is('CONFLICT') || err.status === 409)) {
-        setFormError('An account with this email already exists. Please log in instead.');
+        // CONFLICT covers two distinct backend cases with the same code (email taken vs
+        // display name taken) — only `message` differs between them, so use it directly
+        // rather than a single hardcoded string that was only ever accurate for the
+        // email case.
+        setFormError(err.message || 'An account with this email already exists. Please log in instead.');
       } else if (err instanceof ApiError && err.is('VALIDATION_FAILED')) {
         setFieldErrors(fieldErrorMap(err.fieldErrors));
         setFormError(null);
