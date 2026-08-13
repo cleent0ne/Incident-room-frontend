@@ -306,7 +306,7 @@ export default function TermsPage() {
               <p>
                 Email:{' '}
                 <a href="mailto:legal@incidentroom.io" className="site-footer__inline-link">
-                  legal@incidentroom.io
+                  incidentroom1@gmail.com
                 </a>
               </p>
             </div>
