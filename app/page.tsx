@@ -24,7 +24,7 @@ export default function HomePage() {
         {/* ── 1. HERO BLOCK ── */}
         <section className="relative grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-8 pb-12 border-b border-neutral-800/80">
           <div className="lg:col-span-7 space-y-6">
-            
+
             {/* Section Counter Badge */}
             <div className="flex items-center gap-3">
               <span className="pill-counter-badge">
@@ -82,11 +82,6 @@ export default function HomePage() {
         {/* ── 2. HOW IT WORKS WORKFLOW ── */}
         <section className="relative space-y-8">
           <div className="relative z-10 max-w-3xl">
-            <span className="pill-counter-badge">
-              02/04 · METHODOLOGY
-            </span>
-            <div className="ghost-watermark">02</div>
-
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-3">
               How the <span className="text-[#A3E635]">simulation works</span>
             </h2>
@@ -192,11 +187,6 @@ export default function HomePage() {
         {/* ── 4. FEATURED INCIDENT SCENARIOS CATALOG ── */}
         <section className="relative space-y-8">
           <div className="relative z-10 max-w-3xl">
-            <span className="pill-counter-badge">
-              04/04 · SCENARIO CATALOG
-            </span>
-            <div className="ghost-watermark">04</div>
-
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-3">
               Explore <span className="text-[#A3E635]">Production Scenarios</span>
             </h2>
