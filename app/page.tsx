@@ -57,7 +57,7 @@ export default function HomePage() {
             {/* Micro-copy badge */}
             <div className="pt-2 flex items-center gap-2 text-xs text-neutral-500 font-mono">
               <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
-              Runs 100% client-side in your browser. Zero installation required.
+              "O_O"
             </div>
           </div>
 
