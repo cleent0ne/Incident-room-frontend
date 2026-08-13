@@ -127,11 +127,6 @@ export default function HomePage() {
         {/* ── 3. TODAY'S FEATURED INCIDENT SPOTLIGHT ── */}
         <section className="relative space-y-8">
           <div className="relative z-10 max-w-3xl">
-            <span className="pill-counter-badge">
-              03/04 · DAILY INCIDENT SPOTLIGHT
-            </span>
-            <div className="ghost-watermark">03</div>
-
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-3">
               Today’s <span className="text-[#A3E635]">Outage Challenge</span>
             </h2>
