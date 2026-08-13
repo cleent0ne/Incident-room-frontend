@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { Manrope, DM_Mono } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 
 import { AuthProvider } from '@/lib/auth-context';
@@ -69,6 +70,19 @@ export default async function RootLayout({
       lang="en"
       className={`${manrope.variable} ${dmMono.variable}`}
     >
+      {/* Google tag (gtag.js) */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-1THSJMF111"
+        strategy="afterInteractive"
+      />
+      <Script id="gtag-init" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-1THSJMF111');
+        `}
+      </Script>
       <body>
         <AuthProvider>
           <ToastProvider>
