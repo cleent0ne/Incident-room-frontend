@@ -26,15 +26,6 @@ export default function HomePage() {
           <div className="lg:col-span-7 space-y-6">
 
             {/* Section Counter Badge */}
-            <div className="flex items-center gap-3">
-              <span className="pill-counter-badge">
-                01/05 · SIMULATION PLATFORM
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-[#A3E635] font-mono bg-[#A3E635]/10 px-2.5 py-1 rounded-full border border-[#A3E635]/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#A3E635] animate-ping" />
-                Browser-Native Incident Simulator
-              </span>
-            </div>
 
             {/* High-Contrast Conversion Heading */}
             <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white tracking-tight leading-[1.08]">
