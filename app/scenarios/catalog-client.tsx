@@ -52,23 +52,25 @@ function CustomRootCauseSelect({
   const selectedLabel = value === 'ALL' ? 'All root causes' : value;
 
   return (
-    <div className="custom-dropdown" ref={containerRef}>
+    <div className="relative inline-block text-left" ref={containerRef}>
       <button
         type="button"
-        className={`custom-dropdown__trigger${isOpen ? ' custom-dropdown__trigger--open' : ''}`}
+        className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-mono font-medium transition-all ${
+          isOpen
+            ? 'bg-[#121214] border-[#A3E635] text-white shadow-[0_0_15px_rgba(163,230,53,0.2)]'
+            : 'bg-[#121214] border-neutral-800 text-neutral-300 hover:border-neutral-700 hover:text-white'
+        }`}
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        <span className="mono">{selectedLabel}</span>
+        <span>{selectedLabel}</span>
         <svg
-          className={`custom-dropdown__chevron${isOpen ? ' custom-dropdown__chevron--rotated' : ''}`}
-          width="12"
-          height="12"
+          className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180 text-[#A3E635]' : 'text-neutral-400'}`}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -77,32 +79,43 @@ function CustomRootCauseSelect({
       </button>
 
       {isOpen && (
-        <div className="custom-dropdown__menu fade-in" role="listbox">
+        <div
+          className="absolute right-0 mt-2 w-56 rounded-xl bg-[#121214] border border-neutral-800 shadow-2xl py-1 z-50 focus:outline-none max-h-60 overflow-y-auto"
+          role="listbox"
+        >
           <div
             role="option"
             aria-selected={value === 'ALL'}
-            className={`custom-dropdown__item${value === 'ALL' ? ' custom-dropdown__item--selected' : ''}`}
+            className={`flex items-center justify-between px-4 py-2.5 text-xs font-mono cursor-pointer transition-colors ${
+              value === 'ALL'
+                ? 'bg-[#A3E635]/10 text-[#A3E635] font-bold'
+                : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
+            }`}
             onClick={() => {
               onChange('ALL');
               setIsOpen(false);
             }}
           >
-            <span className="mono">All root causes</span>
-            {value === 'ALL' && <span className="custom-dropdown__check">✓</span>}
+            <span>All root causes</span>
+            {value === 'ALL' && <span className="text-[#A3E635]">✓</span>}
           </div>
           {options.map((opt) => (
             <div
               key={opt}
               role="option"
               aria-selected={value === opt}
-              className={`custom-dropdown__item${value === opt ? ' custom-dropdown__item--selected' : ''}`}
+              className={`flex items-center justify-between px-4 py-2.5 text-xs font-mono cursor-pointer transition-colors ${
+                value === opt
+                  ? 'bg-[#A3E635]/10 text-[#A3E635] font-bold'
+                  : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
+              }`}
               onClick={() => {
                 onChange(opt);
                 setIsOpen(false);
               }}
             >
-              <span className="mono">#{opt}</span>
-              {value === opt && <span className="custom-dropdown__check">✓</span>}
+              <span>#{opt}</span>
+              {value === opt && <span className="text-[#A3E635]">✓</span>}
             </div>
           ))}
         </div>
@@ -113,7 +126,7 @@ function CustomRootCauseSelect({
 
 export function CatalogClient() {
   return (
-    <Suspense fallback={<main className="shell page empty mono">Loading…</main>}>
+    <Suspense fallback={<main className="shell page empty mono text-neutral-400">Loading catalog…</main>}>
       <CatalogContent />
     </Suspense>
   );
@@ -143,96 +156,119 @@ function CatalogContent() {
   }
 
   return (
-    <main className="shell page">
-      {/* ── Page Header ── */}
-      <div className="catalog-header">
-        <div className="catalog-header__meta">
-          <span className="section-label">Incident Catalog</span>
-          <h1 className="catalog-header__title">Browse incidents</h1>
-          <p className="catalog-header__lead">
-            Practice reading telemetry and making the call under pressure.
+    <main className="min-h-screen bg-[#0A0A0A] text-white bg-dot-pattern">
+      <div className="shell page space-y-10 py-10">
+        
+        {/* ── Page Header ── */}
+        <div className="space-y-4 max-w-3xl">
+          <span className="pill-counter-badge">
+            INCIDENT SCENARIO CATALOG
+          </span>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+            Browse <span className="text-[#A3E635]">Incidents</span>
+          </h1>
+          <p className="text-neutral-400 text-lg leading-relaxed">
+            Practice reading real telemetry logs, diagnosing system bottlenecks, and applying fixes under pressure.
           </p>
+          <div className="accent-header-line" />
         </div>
-      </div>
 
-      {/* ── Filter Bar ── */}
-      <div className="catalog-filterbar">
-        {/* Difficulty pills */}
-        <div className="catalog-filterbar__group">
-          <span className="catalog-filterbar__label">Difficulty</span>
-          <div className="catalog-filterbar__pills">
-            {DIFFICULTIES.map((d) => (
-              <button
-                key={d}
-                className={`catalog-pill${difficulty === d ? ' catalog-pill--active' : ''}`}
-                onClick={() => updateParams({ difficulty: d })}
-              >
-                {DIFFICULTY_LABELS[d]}
-              </button>
-            ))}
+        {/* ── Filter Bar ── */}
+        <div className="bg-[#121214] border border-neutral-800/80 rounded-2xl p-6 flex flex-wrap items-center justify-between gap-6 shadow-lg">
+          {/* Difficulty pills */}
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold mr-1">
+              Difficulty:
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {DIFFICULTIES.map((d) => {
+                const active = difficulty === d;
+                return (
+                  <button
+                    key={d}
+                    type="button"
+                    className={`px-4 py-2 rounded-full text-xs font-mono font-bold transition-all ${
+                      active
+                        ? 'bg-[#A3E635] text-[#0A0A0A] shadow-[0_0_15px_rgba(163,230,53,0.3)]'
+                        : 'bg-[#0A0A0A] text-neutral-400 border border-neutral-800 hover:border-neutral-700 hover:text-white'
+                    }`}
+                    onClick={() => updateParams({ difficulty: d })}
+                  >
+                    {DIFFICULTY_LABELS[d]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Root cause custom dropdown */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold">
+              Root cause:
+            </span>
+            <AsyncBoundary state={rootCauses} loadingLabel="">
+              {(options) => (
+                <CustomRootCauseSelect
+                  value={rootCause}
+                  options={options}
+                  onChange={(val) => updateParams({ rootCause: val })}
+                />
+              )}
+            </AsyncBoundary>
           </div>
         </div>
 
-        {/* Root cause custom dropdown */}
-        <div className="catalog-filterbar__group">
-          <span className="catalog-filterbar__label">Root cause</span>
-          <AsyncBoundary state={rootCauses} loadingLabel="">
-            {(options) => (
-              <CustomRootCauseSelect
-                value={rootCause}
-                options={options}
-                onChange={(val) => updateParams({ rootCause: val })}
-              />
-            )}
+        {/* ── Scenario Grid ── */}
+        <div className="space-y-6">
+          <AsyncBoundary state={scenarios} loadingLabel="Loading incidents…">
+            {(result) =>
+              result.content.length === 0 ? (
+                <div className="bg-[#121214] border border-neutral-800 rounded-2xl p-12 text-center space-y-3">
+                  <span className="text-sm font-mono text-[#A3E635]">// no matching results</span>
+                  <p className="text-neutral-400 text-base">No incidents match these active filters — try widening your selection.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between text-xs font-mono text-neutral-400 border-b border-neutral-800/60 pb-3">
+                    <span>Showing {result.content.length} of {result.page.totalElements} incidents</span>
+                    <span className="text-[#A3E635]">Page {result.page.number + 1} of {result.page.totalPages}</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {result.content.map((scenario) => (
+                      <ScenarioCard key={scenario.slug} scenario={scenario} />
+                    ))}
+                  </div>
+
+                  {result.page.totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-4 pt-8">
+                      <button
+                        className="px-5 py-2.5 rounded-full bg-[#121214] border border-neutral-800 text-neutral-300 text-sm font-mono font-bold hover:border-[#A3E635] hover:text-[#A3E635] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                        disabled={result.page.number === 0}
+                        onClick={() => updateParams({ page: result.page.number - 1 })}
+                      >
+                        ← Prev
+                      </button>
+                      <span className="text-xs font-mono text-neutral-400">
+                        {result.page.number + 1} / {result.page.totalPages}
+                      </span>
+                      <button
+                        className="px-5 py-2.5 rounded-full bg-[#121214] border border-neutral-800 text-neutral-300 text-sm font-mono font-bold hover:border-[#A3E635] hover:text-[#A3E635] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                        disabled={result.page.number + 1 >= result.page.totalPages}
+                        onClick={() => updateParams({ page: result.page.number + 1 })}
+                      >
+                        Next →
+                      </button>
+                    </div>
+                  )}
+                </>
+              )
+            }
           </AsyncBoundary>
         </div>
-      </div>
 
-      {/* ── Scenario Grid ── */}
-      <div className="catalog-grid-area">
-        <AsyncBoundary state={scenarios} loadingLabel="Loading incidents…">
-          {(result) =>
-            result.content.length === 0 ? (
-              <div className="catalog-empty">
-                <span className="mono">// no results</span>
-                <p>No incidents match these filters — try widening them.</p>
-              </div>
-            ) : (
-              <>
-                <div className="catalog-count mono">
-                  {result.page.totalElements} incident{result.page.totalElements !== 1 ? 's' : ''}
-                </div>
-                <div className="grid catalog-grid">
-                  {result.content.map((scenario) => (
-                    <ScenarioCard key={scenario.slug} scenario={scenario} />
-                  ))}
-                </div>
-                {result.page.totalPages > 1 && (
-                  <div className="catalog-pagination">
-                    <button
-                      className="catalog-page-btn"
-                      disabled={result.page.number === 0}
-                      onClick={() => updateParams({ page: result.page.number - 1 })}
-                    >
-                      ← Prev
-                    </button>
-                    <span className="catalog-page-info mono">
-                      {result.page.number + 1} / {result.page.totalPages}
-                    </span>
-                    <button
-                      className="catalog-page-btn"
-                      disabled={result.page.number + 1 >= result.page.totalPages}
-                      onClick={() => updateParams({ page: result.page.number + 1 })}
-                    >
-                      Next →
-                    </button>
-                  </div>
-                )}
-              </>
-            )
-          }
-        </AsyncBoundary>
       </div>
     </main>
   );
 }
+

@@ -1,34 +1,42 @@
 import type { Config } from 'tailwindcss';
 
-// Tokens copied 1:1 from the design prototype's styles.css :root block.
-// Do not "improve" these — they are the approved visual language.
 const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        void: '#0a0b0d',
-        panel: '#14171c',
-        raised: '#1c2027',
-        line: 'rgba(255,255,255,.07)',
-        line2: 'rgba(255,255,255,.14)',
-        ink: '#eef0f3',
-        dim: 'rgba(238,240,243,.58)',
-        faint: 'rgba(238,240,243,.32)',
-        signal: '#ff9f1c',
-        good: '#2bd576',
-        partial: '#ffd166',
-        bad: '#ff5c5c',
+        canvas: '#0A0A0A',
+        void: '#0A0A0A',
+        surface: '#121214',
+        panel: '#121214',
+        raised: '#1A1A1E',
+        lime: '#A3E635',
+        signal: '#A3E635',
+        red: '#EF4444',
+        bad: '#EF4444',
+        good: '#A3E635',
+        ink: '#FFFFFF',
+        dim: '#9CA3AF',
+        faint: 'rgba(156, 163, 175, 0.55)',
+        line: 'rgba(255, 255, 255, 0.08)',
+        line2: 'rgba(255, 255, 255, 0.16)',
       },
       fontFamily: {
-        sans: ['var(--font-manrope)', 'Arial', 'sans-serif'],
+        sans: ['var(--font-manrope)', 'Inter', 'sans-serif'],
         mono: ['var(--font-dm-mono)', 'monospace'],
+      },
+      boxShadow: {
+        'glow-lime': '0 0 25px rgba(163, 230, 53, 0.18)',
+        'glow-lime-lg': '0 0 35px rgba(163, 230, 53, 0.28)',
+        'glow-red': '0 0 25px rgba(239, 68, 68, 0.15)',
       },
       maxWidth: {
         shell: '1280px',
       },
       borderRadius: {
-        DEFAULT: '6px',
+        DEFAULT: '8px',
+        xl: '12px',
+        '2xl': '16px',
       },
     },
   },
@@ -36,3 +44,4 @@ const config: Config = {
 };
 
 export default config;
+

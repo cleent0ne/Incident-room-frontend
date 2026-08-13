@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { IconFlame, IconClock, IconXMark, IconBolt } from '@/components/ui/icons';
+import {
+  IconFlame,
+  IconClock,
+  IconArrowRight,
+} from '@/components/ui/icons';
 import { useApiGet } from '@/lib/use-api';
 import { AsyncBoundary } from '@/components/ui/async-boundary';
 import { ScenarioCard } from '@/components/scenario/scenario-card';
@@ -10,179 +13,238 @@ import { DifficultyBadge } from '@/components/scenario/difficulty-badge';
 import { HeroPreview } from '@/components/home/hero-preview';
 import type { Page, ScenarioDetailDto, ScenarioSummaryDto } from '@/lib/types';
 
-// ─── MAIN PAGE ────────────────────────────────────────────────────────────────
-
 export default function HomePage() {
   const dailyResult = useApiGet<ScenarioDetailDto>('/api/v1/scenarios/daily');
   const scenariosResult = useApiGet<Page<ScenarioSummaryDto>>('/api/v1/scenarios?page=0&size=6');
 
   return (
-    <main className="shell page">
+    <main className="min-h-screen bg-[#0A0A0A] text-white bg-dot-pattern">
+      <div className="shell page space-y-24 py-12">
 
-      {/* ── HERO (CLEAR PURPOSE) ── */}
-      <div className="home-hero">
-        <div>
-          <h1 className="home-hero-title">
-            Practice real-world incident response in your browser.
-          </h1>
+        {/* ── 1. HERO BLOCK ── */}
+        <section className="relative grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-8 pb-12 border-b border-neutral-800/80">
+          <div className="lg:col-span-7 space-y-6">
+            
+            {/* Section Counter Badge */}
+            <div className="flex items-center gap-3">
+              <span className="pill-counter-badge">
+                01/05 · SIMULATION PLATFORM
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-[#A3E635] font-mono bg-[#A3E635]/10 px-2.5 py-1 rounded-full border border-[#A3E635]/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#A3E635] animate-ping" />
+                Browser-Native Incident Simulator
+              </span>
+            </div>
 
-          <p className="home-hero-lead">
-            Incident Room is an interactive learning platform where developers and engineers simulate real production
-            outages. Investigate logs, analyze system behavior, identify root causes, and apply fixes under time pressure.
-          </p>
+            {/* High-Contrast Conversion Heading */}
+            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white tracking-tight leading-[1.08]">
+              Practice real-world <span className="text-[#A3E635]">incident response</span> in your browser.
+            </h1>
 
-          <div className="home-hero-actions">
-            <Link className="home-hero-btn-primary" href="/scenarios">
-              Browse Incident Scenarios →
+            {/* Subtext */}
+            <p className="text-neutral-400 text-lg sm:text-xl leading-relaxed max-w-2xl font-normal">
+              Incident Room is an interactive learning platform where developers and SREs simulate real production
+              outages. Investigate live telemetry logs, analyze system behavior under pressure, and apply fixes before SLAs breach.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <Link className="btn-primary-lime text-base font-bold" href="/scenarios">
+                <span>Browse Incident Scenarios</span>
+                <IconArrowRight size={18} />
+              </Link>
+
+              <Link
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-neutral-700 bg-[#121214] text-neutral-300 text-sm font-semibold hover:border-[#A3E635] hover:text-white transition-all shadow-sm"
+                href="/play?daily=true"
+              >
+                <IconFlame size={16} className="text-[#A3E635]" />
+                <span>Daily Challenge (~10 min)</span>
+              </Link>
+            </div>
+
+            {/* Micro-copy badge */}
+            <div className="pt-2 flex items-center gap-2 text-xs text-neutral-500 font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+              Runs 100% client-side in your browser. Zero installation required.
+            </div>
+          </div>
+
+          {/* Right Hero Demo */}
+          <div className="lg:col-span-5 relative">
+            <div className="relative z-10 rounded-2xl p-1 bg-gradient-to-b from-neutral-800 to-neutral-900 shadow-2xl border border-neutral-800">
+              <HeroPreview />
+            </div>
+          </div>
+        </section>
+
+
+        {/* ── 2. HOW IT WORKS WORKFLOW ── */}
+        <section className="relative space-y-8">
+          <div className="relative z-10 max-w-3xl">
+            <span className="pill-counter-badge">
+              02/04 · METHODOLOGY
+            </span>
+            <div className="ghost-watermark">02</div>
+
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-3">
+              How the <span className="text-[#A3E635]">simulation works</span>
+            </h2>
+            <div className="accent-header-line" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                step: '01/04',
+                ghost: '01',
+                title: '1. Investigate',
+                desc: 'Analyze live telemetry logs, metrics, and distributed traces to detect anomalies.',
+              },
+              {
+                step: '02/04',
+                ghost: '02',
+                title: '2. Identify',
+                desc: 'Formulate hypotheses and isolate the exact root-cause microservice failure.',
+              },
+              {
+                step: '03/04',
+                ghost: '03',
+                title: '3. Fix',
+                desc: 'Select and execute the optimal remediation strategy before SLAs are breached.',
+              },
+              {
+                step: '04/04',
+                ghost: '04',
+                title: '4. Learn',
+                desc: 'Review structured postmortems, diagnostic scores, and timing analytics.',
+              },
+            ].map((card) => (
+              <div
+                key={card.step}
+                className="relative bg-[#121214] border border-neutral-800 rounded-xl p-6 space-y-4 hover:border-[#A3E635]/50 transition-all shadow-md overflow-hidden group"
+              >
+                <div className="ghost-watermark">{card.ghost}</div>
+                <span className="pill-counter-badge">{card.step}</span>
+                <h3 className="text-lg font-bold text-white group-hover:text-[#A3E635] transition-colors">
+                  {card.title}
+                </h3>
+                <p className="text-neutral-400 text-sm leading-relaxed">
+                  {card.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+
+        {/* ── 3. TODAY'S FEATURED INCIDENT SPOTLIGHT ── */}
+        <section className="relative space-y-8">
+          <div className="relative z-10 max-w-3xl">
+            <span className="pill-counter-badge">
+              03/04 · DAILY INCIDENT SPOTLIGHT
+            </span>
+            <div className="ghost-watermark">03</div>
+
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-3">
+              Today’s <span className="text-[#A3E635]">Outage Challenge</span>
+            </h2>
+            <div className="accent-header-line" />
+          </div>
+
+          <AsyncBoundary state={dailyResult}>
+            {(daily) => (
+              <div className="relative bg-[#121214] border border-[#A3E635]/40 rounded-2xl p-8 space-y-6 shadow-[0_0_30px_rgba(163,230,53,0.12)]">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+                  <div className="flex items-center gap-3">
+                    <DifficultyBadge difficulty={daily.difficulty} />
+                    <span className="text-xs font-mono bg-neutral-800 text-[#A3E635] px-3 py-1 rounded-full border border-neutral-700">
+                      #{daily.rootCauseClass}
+                    </span>
+                  </div>
+                  <span className="text-xs font-mono text-neutral-400 flex items-center gap-1.5">
+                    <IconClock size={14} className="text-[#A3E635]" /> Target: {Math.round(daily.durationTargetSeconds / 60)} min
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-white">{daily.title}</h3>
+                  <p className="text-neutral-300 text-base leading-relaxed max-w-3xl">
+                    {daily.symptomSummary}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-xs text-neutral-500 font-mono">
+                    Updated daily · Timed diagnostic scoring
+                  </span>
+                  <Link className="btn-primary-lime font-bold text-sm" href={`/play?scenario=${daily.slug}`}>
+                    <span>Start Outage Simulation</span>
+                    <IconArrowRight size={16} />
+                  </Link>
+                </div>
+              </div>
+            )}
+          </AsyncBoundary>
+        </section>
+
+
+        {/* ── 4. FEATURED INCIDENT SCENARIOS CATALOG ── */}
+        <section className="relative space-y-8">
+          <div className="relative z-10 max-w-3xl">
+            <span className="pill-counter-badge">
+              04/04 · SCENARIO CATALOG
+            </span>
+            <div className="ghost-watermark">04</div>
+
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-3">
+              Explore <span className="text-[#A3E635]">Production Scenarios</span>
+            </h2>
+            <div className="accent-header-line" />
+            <p className="text-neutral-400 text-base">
+              Select an incident below to jump straight into active log analysis and root-cause isolation.
+            </p>
+          </div>
+
+          <AsyncBoundary state={scenariosResult}>
+            {(data) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {data.content.map((scenario) => (
+                  <ScenarioCard key={scenario.slug} scenario={scenario} />
+                ))}
+              </div>
+            )}
+          </AsyncBoundary>
+        </section>
+
+
+        {/* ── 7. FOOTER CONVERSION CTA BANNER ── */}
+        <section className="relative bg-[#121214] border border-[#A3E635]/40 rounded-2xl p-10 sm:p-14 text-center space-y-6 shadow-[0_0_35px_rgba(163,230,53,0.15)] overflow-hidden">
+          <div className="max-w-2xl mx-auto space-y-4">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Ready to master <span className="text-[#A3E635]">on-call incident response?</span>
+            </h2>
+            <p className="text-neutral-300 text-base sm:text-lg">
+              Jump into a live simulation right now. Build real debugging skills and eliminate on-call anxiety.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <Link className="btn-primary-lime text-base font-bold py-3.5 px-8" href="/scenarios">
+              <span>Explore Scenarios Now</span>
+              <IconArrowRight size={18} />
             </Link>
 
-            <Link className="button outline" href="/play?daily=true">
-              <IconFlame size={14} /> Daily Challenge (~10 min)
+            <Link
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-neutral-700 bg-[#0A0A0A] text-white text-base font-semibold hover:border-[#A3E635] hover:text-[#A3E635] transition-all"
+              href="/register"
+            >
+              Create Free Account
             </Link>
           </div>
+        </section>
 
-          {/* Static explanation (important for Google) */}
-          <div style={{ marginTop: 20, fontSize: 13, color: 'var(--dim)' }}>
-            Runs entirely in your browser. No installation required. Built for learning and practicing incident response.
-          </div>
-        </div>
-
-        <div className="hero-right">
-          <HeroPreview />
-        </div>
       </div>
-
-
-      {/* ── WHAT THIS APP IS ── */}
-      <div className="section" style={{ textAlign: 'center', maxWidth: 900, marginInline: 'auto' }}>
-        <h2>What is Incident Room?</h2>
-
-        <p style={{ color: 'var(--dim)', lineHeight: 1.7 }}>
-          Incident Room is a training platform that helps developers, DevOps engineers, and students learn how to respond
-          to real-world system failures. Instead of reading theory, users are placed inside simulated incidents where they
-          diagnose problems, investigate logs, and fix issues step by step.
-        </p>
-
-        <p style={{ color: 'var(--dim)', lineHeight: 1.7, marginTop: 12 }}>
-          Each scenario mimics real production environments, including microservices, telemetry data, and cascading
-          failures. The goal is to build practical debugging and on-call skills through hands-on experience.
-        </p>
-      </div>
-
-
-      {/* ── HOW IT WORKS ── */}
-      <div className="section">
-        <div className="section-heading">
-          <h2>How it works</h2>
-        </div>
-
-        <div className="home-workflow-grid">
-          <div className="home-workflow-card">
-            <h3>1. Investigate</h3>
-            <p>Analyze logs, metrics, and traces to understand the issue.</p>
-          </div>
-
-          <div className="home-workflow-card">
-            <h3>2. Identify</h3>
-            <p>Form a hypothesis about the root cause.</p>
-          </div>
-
-          <div className="home-workflow-card">
-            <h3>3. Fix</h3>
-            <p>Apply the correct remediation.</p>
-          </div>
-
-          <div className="home-workflow-card">
-            <h3>4. Learn</h3>
-            <p>Review a postmortem and improve your approach.</p>
-          </div>
-        </div>
-      </div>
-
-
-      {/* ── DAILY INCIDENT (SAFE RENDER) ── */}
-      <div className="section">
-        <div className="section-heading">
-          <h2>Today’s Featured Incident</h2>
-        </div>
-
-        <AsyncBoundary state={dailyResult}>
-          {(daily) => (
-            <div className="home-daily-card">
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                <DifficultyBadge difficulty={daily.difficulty} />
-                <span className="tag">#{daily.rootCauseClass}</span>
-              </div>
-
-              <h3 style={{ marginTop: 10 }}>{daily.title}</h3>
-
-              <p style={{ color: 'var(--dim)' }}>
-                {daily.symptomSummary}
-              </p>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
-                <span className="mono">
-                  <IconClock size={12} /> {Math.round(daily.durationTargetSeconds / 60)} min
-                </span>
-
-                <Link className="button primary" href={`/play?scenario=${daily.slug}`}>
-                  Start →
-                </Link>
-              </div>
-            </div>
-          )}
-        </AsyncBoundary>
-      </div>
-
-
-      {/* ── FEATURED SCENARIOS ── */}
-      <div className="section">
-        <div className="section-heading">
-          <h2>Featured Incident Scenarios</h2>
-        </div>
-
-        <AsyncBoundary state={scenariosResult}>
-          {(data) => (
-            <div className="grid">
-              {data.content.map((scenario) => (
-                <ScenarioCard key={scenario.slug} scenario={scenario} />
-              ))}
-            </div>
-          )}
-        </AsyncBoundary>
-      </div>
-
-
-      {/* ── WHO IT’S FOR ── */}
-      <div className="section" style={{ textAlign: 'center', maxWidth: 900, marginInline: 'auto' }}>
-        <h2>Who this is for</h2>
-
-        <p style={{ color: 'var(--dim)', lineHeight: 1.7 }}>
-          Built for software engineers, DevOps engineers, SREs, and students who want to improve debugging and incident
-          response skills. Especially useful for preparing for real on-call responsibilities.
-        </p>
-      </div>
-
-
-      {/* ── CTA ── */}
-      <div className="home-cta-banner">
-        <h2>Start practicing incident response</h2>
-
-        <p className="lead">
-          Jump into a simulation and learn by doing.
-        </p>
-
-        <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
-          <Link className="home-hero-btn-primary" href="/scenarios">
-            Explore Scenarios →
-          </Link>
-
-          <Link className="button outline" href="/register">
-            Create Free Account
-          </Link>
-        </div>
-      </div>
-
     </main>
   );
 }

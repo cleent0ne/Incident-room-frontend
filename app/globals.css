@@ -2,6 +2,139 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Conversion Dark-Mode Design System Utilities */
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.text-accent-lime {
+  color: #A3E635;
+}
+
+.btn-primary-lime {
+  background-color: #A3E635;
+  color: #0A0A0A;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 12px 26px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 20px rgba(163, 230, 53, 0.25);
+  border: 1px solid #A3E635;
+  text-decoration: none;
+}
+
+.btn-primary-lime:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(163, 230, 53, 0.45);
+  background-color: #bef264;
+  color: #000000;
+}
+
+.btn-primary-lime svg {
+  transition: transform 0.2s ease;
+}
+
+.btn-primary-lime:hover svg {
+  transform: translateX(4px);
+}
+
+.pill-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  border: 1px solid rgba(163, 230, 53, 0.4);
+  background: rgba(163, 230, 53, 0.08);
+  color: #A3E635;
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.ghost-watermark {
+  position: absolute;
+  right: 16px;
+  top: -12px;
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.07;
+  color: #FFFFFF;
+  font-family: var(--font-dm-mono), monospace;
+  pointer-events: none;
+  user-select: none;
+}
+
+.vs-card-negative {
+  background: #121214;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.12);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.vs-card-positive {
+  background: #121214;
+  border: 1px solid #A3E635;
+  box-shadow: 0 0 30px rgba(163, 230, 53, 0.2);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.vs-badge-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #121214;
+  border: 2px solid #A3E635;
+  color: #A3E635;
+  font-weight: 900;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(163, 230, 53, 0.35);
+  z-index: 10;
+}
+
+.brain-callout-box {
+  background: #121214;
+  border: 1px solid rgba(163, 230, 53, 0.35);
+  box-shadow: 0 0 25px rgba(163, 230, 53, 0.12);
+  border-radius: 16px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.accent-header-line {
+  width: 56px;
+  height: 3px;
+  background: #A3E635;
+  border-radius: 9999px;
+  margin-top: 10px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 10px rgba(163, 230, 53, 0.5);
+}
+
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.flowchart-line-animated {
+  stroke-dasharray: 6 4;
+  animation: flow-dash 1.2s linear infinite;
+}
+
 /*
  * This file is a faithful port of the approved design prototype's styles.css.
  * Class names (.card, .badge, .button, .topbar, etc.) are kept IDENTICAL to the
@@ -13,23 +146,18 @@
  */
 
 :root {
-  --void: #0a0b0d;
-  --panel: rgba(20, 23, 28, 0.4);
-  --raised: rgba(28, 32, 39, 0.5);
-  --line: transparent;
-  --line2: transparent;
-  --ink: #eef0f3;
-  --dim: rgba(238, 240, 243, 0.58);
-  /* Was 0.32 — Lighthouse a11y audit flagged every element using this token
-     (leaderboard table headers/dates, footer headings/tagline/copy, section
-     labels) at ~2.6:1 against --void/--panel. 0.55 clears WCAG AA's 4.5:1
-     for normal text with margin across all of those backgrounds while still
-     reading as visually "faint" next to --dim (0.58) and --ink. */
-  --faint: rgba(238, 240, 243, 0.55);
-  --signal: rgb(131, 168, 28);
-  --good: #2bd576;
-  --partial: #ffd16654;
-  --bad: #ff5c5c;
+  --void: #0A0A0A;
+  --panel: #121214;
+  --raised: #1A1A1E;
+  --line: rgba(255, 255, 255, 0.08);
+  --line2: rgba(255, 255, 255, 0.16);
+  --ink: #FFFFFF;
+  --dim: #9CA3AF;
+  --faint: rgba(156, 163, 175, 0.65);
+  --signal: #A3E635;
+  --good: #A3E635;
+  --partial: #FACC15;
+  --bad: #EF4444;
 }
 
 * {

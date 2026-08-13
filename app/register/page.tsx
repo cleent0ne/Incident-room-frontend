@@ -62,75 +62,85 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="auth-shell">
-      <div className="auth-shell-side">
-        <div className="auth-shell-side-content">
-          <Link href="/" className="auth-shell-brand">
-            <span className="nav-logo-mark">
-              <IconBolt size={18} />
-            </span>
-            <span className="brand">
-              Incident<b>Room</b>
-            </span>
-          </Link>
+    <main className="min-h-screen bg-[#0A0A0A] text-white bg-dot-pattern flex items-center justify-center p-6">
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        {/* Left Info Panel */}
+        <div className="lg:col-span-6 bg-[#121214] border border-neutral-800 rounded-2xl p-8 sm:p-10 flex flex-col justify-between space-y-8 shadow-xl">
+          <div className="space-y-6">
+            <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold text-white">
+              <span className="p-1.5 rounded-lg bg-[#A3E635]/10 text-[#A3E635] border border-[#A3E635]/30">
+                <IconBolt size={18} />
+              </span>
+              <span>
+                Incident<b className="text-[#A3E635]">Room</b>
+              </span>
+            </Link>
 
-          <h1>Learn incident response by running the room.</h1>
-          <p className="auth-shell-lead">
-            Create a free account to track your streak, save your run history, and climb the
-            leaderboard on every scenario you play.
-          </p>
+            <div className="space-y-2">
+              <span className="pill-counter-badge">JOIN THE PLATFORM</span>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Learn incident response by <span className="text-[#A3E635]">running the room</span>.
+              </h1>
+              <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
+                Create a free account to track your streak, save your run history, and climb the leaderboard on every scenario you play.
+              </p>
+            </div>
 
-          <div className="auth-shell-features">
-            <div className="auth-shell-feature">
-              <span className="auth-shell-feature-icon">
-                <IconRadio size={12} />
-              </span>
-              <div>
-                <div className="auth-shell-feature-title">Real incidents, safely broken</div>
-                <div className="auth-shell-feature-desc">Live telemetry and topology views for scenarios modeled on real outages.</div>
+            <div className="space-y-4 pt-2">
+              <div className="flex items-start gap-3.5 p-3.5 rounded-xl bg-[#0A0A0A] border border-neutral-800/80">
+                <div className="p-2 rounded-lg bg-[#A3E635]/10 text-[#A3E635] shrink-0">
+                  <IconRadio size={14} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white">Real incidents, safely broken</div>
+                  <div className="text-xs text-neutral-400">Live telemetry and topology views for scenarios modeled on real outages.</div>
+                </div>
               </div>
-            </div>
-            <div className="auth-shell-feature">
-              <span className="auth-shell-feature-icon">
-                <IconFlame size={16} />
-              </span>
-              <div>
-                <div className="auth-shell-feature-title">Build a streak</div>
-                <div className="auth-shell-feature-desc">A new daily challenge keeps your incident-response reflexes sharp.</div>
+
+              <div className="flex items-start gap-3.5 p-3.5 rounded-xl bg-[#0A0A0A] border border-neutral-800/80">
+                <div className="p-2 rounded-lg bg-[#A3E635]/10 text-[#A3E635] shrink-0">
+                  <IconFlame size={16} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white">Build a streak</div>
+                  <div className="text-xs text-neutral-400">A new daily challenge keeps your incident-response reflexes sharp.</div>
+                </div>
               </div>
-            </div>
-            <div className="auth-shell-feature">
-              <span className="auth-shell-feature-icon">
-                <IconUser size={16} />
-              </span>
-              <div>
-                <div className="auth-shell-feature-title">Free, no credit card</div>
-                <div className="auth-shell-feature-desc">Just an email and a password — or sign in with Google or GitHub.</div>
+
+              <div className="flex items-start gap-3.5 p-3.5 rounded-xl bg-[#0A0A0A] border border-neutral-800/80">
+                <div className="p-2 rounded-lg bg-[#A3E635]/10 text-[#A3E635] shrink-0">
+                  <IconUser size={16} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white">Free, no credit card required</div>
+                  <div className="text-xs text-neutral-400">Just an email and password — or sign in instantly with Google or GitHub.</div>
+                </div>
               </div>
             </div>
           </div>
+
+          <div className="text-xs font-mono text-neutral-500 pt-4 border-t border-neutral-800">
+            Instant setup · No installation required
+          </div>
         </div>
-      </div>
 
-      <div className="auth-shell-form-col">
-        <div className="auth-card">
-          <Link href="/" className="auth-card-mobile-brand">
-            <span className="nav-logo-mark">
-              <IconBolt size={16} />
-            </span>
-            <span className="brand">
-              Incident<b>Room</b>
-            </span>
-          </Link>
+        {/* Right Form Card */}
+        <div className="lg:col-span-6 bg-[#121214] border border-neutral-800 rounded-2xl p-8 sm:p-10 flex flex-col justify-center space-y-6 shadow-2xl">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-bold text-white">Create an account</h2>
+            <p className="text-sm text-neutral-400">Start your first incident in under a minute.</p>
+          </div>
 
-          <h1>Create an account</h1>
-          <p className="auth-card-lead">Start your first incident in under a minute.</p>
-
-          <form onSubmit={handleSubmit} noValidate style={{ marginTop: 22 }}>
-            <div className="auth-field">
-              <label htmlFor="displayName">Display name</label>
-              <div className="auth-input-wrap">
-                <IconUser size={16} />
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="displayName" className="block text-xs font-mono text-neutral-300 font-medium uppercase tracking-wider">
+                Display Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+                  <IconUser size={16} />
+                </div>
                 <input
                   id="displayName"
                   type="text"
@@ -138,35 +148,45 @@ export default function RegisterPage() {
                   minLength={2}
                   maxLength={40}
                   autoComplete="nickname"
-                  placeholder="How you'll appear on the leaderboard"
+                  placeholder="How you'll appear on leaderboards"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#0A0A0A] border border-neutral-800 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#A3E635] focus:ring-1 focus:ring-[#A3E635] transition-all"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                 />
               </div>
-              {fieldErrors.displayName && <div className="field-error">{fieldErrors.displayName}</div>}
+              {fieldErrors.displayName && <div className="text-xs text-red-400 font-mono mt-1">{fieldErrors.displayName}</div>}
             </div>
 
-            <div className="auth-field">
-              <label htmlFor="email">Email</label>
-              <div className="auth-input-wrap">
-                <IconMail size={16} />
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="block text-xs font-mono text-neutral-300 font-medium uppercase tracking-wider">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+                  <IconMail size={16} />
+                </div>
                 <input
                   id="email"
                   type="email"
                   required
                   autoComplete="email"
                   placeholder="you@example.com"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#0A0A0A] border border-neutral-800 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#A3E635] focus:ring-1 focus:ring-[#A3E635] transition-all"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              {fieldErrors.email && <div className="field-error">{fieldErrors.email}</div>}
+              {fieldErrors.email && <div className="text-xs text-red-400 font-mono mt-1">{fieldErrors.email}</div>}
             </div>
 
-            <div className="auth-field">
-              <label htmlFor="password">Password</label>
-              <div className="auth-input-wrap">
-                <IconLock size={16} />
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="block text-xs font-mono text-neutral-300 font-medium uppercase tracking-wider">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+                  <IconLock size={16} />
+                </div>
                 <input
                   id="password"
                   type="password"
@@ -175,30 +195,45 @@ export default function RegisterPage() {
                   maxLength={128}
                   autoComplete="new-password"
                   placeholder="At least 10 characters"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#0A0A0A] border border-neutral-800 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#A3E635] focus:ring-1 focus:ring-[#A3E635] transition-all"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               {fieldErrors.password ? (
-                <div className="field-error">{fieldErrors.password}</div>
+                <div className="text-xs text-red-400 font-mono mt-1">{fieldErrors.password}</div>
               ) : (
-                <div className="auth-hint">At least 10 characters.</div>
+                <div className="text-xs text-neutral-500 font-mono mt-1">Must be at least 10 characters.</div>
               )}
             </div>
 
-            {formError && <div className="form-error">{formError}</div>}
+            {formError && (
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-400 font-medium">
+                {formError}
+              </div>
+            )}
 
-            <button className="button primary" type="submit" disabled={submitting}>
-              {submitting ? 'Creating account…' : 'Create account'}
+            <button
+              className="btn-primary-lime w-full justify-center py-3 text-sm font-bold mt-2"
+              type="submit"
+              disabled={submitting}
+            >
+              {submitting ? 'Creating account…' : 'Create Free Account →'}
             </button>
           </form>
 
-          <OAuthButtons />
+          <div className="pt-1">
+            <OAuthButtons />
+          </div>
 
-          <p className="auth-card-footer">
-            Already have an account? <Link href="/login">Log in</Link>
+          <p className="text-center text-xs text-neutral-400 font-mono pt-2 border-t border-neutral-800">
+            Already have an account?{' '}
+            <Link href="/login" className="text-[#A3E635] font-bold hover:underline">
+              Log in
+            </Link>
           </p>
         </div>
+
       </div>
     </main>
   );
