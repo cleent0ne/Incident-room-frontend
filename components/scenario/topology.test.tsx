@@ -62,26 +62,26 @@ describe('getNodeCategory', () => {
 });
 
 describe('Topology Component', () => {
-  it('renders node count and view toggle buttons', () => {
+  it('renders components count and cards', () => {
     render(<Topology topology={topology} />);
-    expect(screen.getByText(/4 nodes/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /diagram/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /cards/i })).toBeInTheDocument();
-  });
-
-  it('switches to cards view on toggle', () => {
-    render(<Topology topology={topology} />);
-    const cardsBtn = screen.getByRole('button', { name: /cards/i });
-    fireEvent.click(cardsBtn);
+    expect(screen.getByText(/4 Components/i)).toBeInTheDocument();
     expect(screen.getByText('Payments DB')).toBeInTheDocument();
     expect(screen.getByText('Checkout API')).toBeInTheDocument();
+    expect(screen.getByText('API Gateway')).toBeInTheDocument();
+    expect(screen.getByText('Event Queue')).toBeInTheDocument();
+  });
+
+  it('displays node inspection details when a card is clicked', () => {
+    render(<Topology topology={topology} />);
+    const nodeCard = screen.getByText('Payments DB');
+    fireEvent.click(nodeCard);
+    expect(screen.getByText('✕ Close')).toBeInTheDocument();
+    expect(screen.getByText(/Inbound traffic:/i)).toBeInTheDocument();
   });
 
   it('triggers onNodeClick when interactive node is clicked', () => {
     const onNodeClick = vi.fn();
     render(<Topology topology={topology} interactive onNodeClick={onNodeClick} />);
-    const cardsBtn = screen.getByRole('button', { name: /cards/i });
-    fireEvent.click(cardsBtn);
     const nodeCard = screen.getByText('Payments DB');
     fireEvent.click(nodeCard);
     expect(onNodeClick).toHaveBeenCalledWith('payments-db');
