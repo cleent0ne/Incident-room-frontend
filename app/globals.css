@@ -1025,6 +1025,20 @@ h3 {
   border-color: rgba(255, 92, 92, 0.35);
 }
 
+.play-grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .play-grid-container {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 16px;
+    align-items: start;
+  }
+}
+
 .play-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -1034,12 +1048,11 @@ h3 {
 }
 
 .play-topology {
-  border-right: 1px solid var(--line);
-  min-height: 400px;
+  min-height: 280px;
 }
 
 .feed {
-  min-height: 400px;
+  min-height: 280px;
 }
 
 .feed-title,

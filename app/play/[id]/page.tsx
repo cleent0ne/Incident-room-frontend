@@ -263,6 +263,9 @@ export default function PlayScreen() {
     );
   }
 
+  const [mobileTab, setMobileTab] = useState<'topology' | 'telemetry' | 'actions'>('actions');
+  const [symptomExpanded, setSymptomExpanded] = useState(false);
+
   // Staged, not binary: crossing the target costs the time bonus, it doesn't fail the
   // attempt — a hard jump straight to --bad overstates that. Amber past target, red
   // reserved for well past (1.5x) — see the design guide's timer-urgency research on
@@ -272,99 +275,229 @@ export default function PlayScreen() {
   const timerClass = `timer mono${wellOverTarget ? ' over' : overTarget ? ' warn' : ''}`;
 
   return (
-    <main className="shell page">
+    <main className="shell page pb-12">
+      {/* Sticky Play Header */}
       <div className="play-header">
-        <div>
-          <div className="eyebrow">{attempt.scenarioTitle}</div>
-          <p style={{ margin: '4px 0 0', color: 'var(--dim)', maxWidth: 560 }}>{attempt.symptomSummary}</p>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="eyebrow truncate">{attempt.scenarioTitle}</span>
+            <button
+              type="button"
+              className="text-[11px] font-mono text-neutral-400 hover:text-[#A3E635] sm:hidden underline decoration-dotted"
+              onClick={() => setSymptomExpanded((v) => !v)}
+            >
+              {symptomExpanded ? 'Hide brief' : 'Brief'}
+            </button>
+          </div>
+          <p
+            className={`text-neutral-300 text-xs sm:text-sm mt-1 max-w-2xl transition-all ${
+              symptomExpanded ? 'block' : 'hidden sm:block'
+            }`}
+          >
+            {attempt.symptomSummary}
+          </p>
         </div>
-        <div className={timerClass}>
+        <div className={`${timerClass} shrink-0 text-xs sm:text-sm`}>
           {formatClock(displayedElapsed)} / {formatClock(attempt.durationTargetSeconds)}
         </div>
       </div>
 
-      <div className="play-grid">
-        <Topology
-          topology={attempt.topology}
-          interactive
-          highlightedNodeIds={highlightedNodeIds}
-          pulseNodeId={pulseNodeId}
-        />
-        <div className="feed">
-          <div className="feed-title section-label">Telemetry</div>
+      {/* Mobile Tab Switcher (< 768px) */}
+      <div className="md:hidden flex items-center justify-between bg-[#121214] border border-neutral-800 rounded-xl p-1 mt-3 gap-1 sticky top-[120px] z-10 shadow-lg">
+        <button
+          type="button"
+          className={`flex-1 py-2 text-xs font-mono rounded-lg font-semibold transition-all flex items-center justify-center gap-1.5 ${
+            mobileTab === 'topology'
+              ? 'bg-[#A3E635] text-black shadow'
+              : 'text-neutral-400 hover:text-white'
+          }`}
+          onClick={() => setMobileTab('topology')}
+        >
+          <span>Topology</span>
+          <span className="text-[10px] opacity-75">({attempt.topology.nodes.length})</span>
+        </button>
+
+        <button
+          type="button"
+          className={`flex-1 py-2 text-xs font-mono rounded-lg font-semibold transition-all flex items-center justify-center gap-1.5 ${
+            mobileTab === 'telemetry'
+              ? 'bg-[#A3E635] text-black shadow'
+              : 'text-neutral-400 hover:text-white'
+          }`}
+          onClick={() => setMobileTab('telemetry')}
+        >
+          <span>Signals</span>
+          {telemetry.length > 0 && (
+            <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+              mobileTab === 'telemetry' ? 'bg-black text-[#A3E635]' : 'bg-[#A3E635]/20 text-[#A3E635]'
+            }`}>
+              {telemetry.length}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          className={`flex-1 py-2 text-xs font-mono rounded-lg font-semibold transition-all flex items-center justify-center gap-1.5 ${
+            mobileTab === 'actions'
+              ? 'bg-[#A3E635] text-black shadow'
+              : 'text-neutral-400 hover:text-white'
+          }`}
+          onClick={() => setMobileTab('actions')}
+        >
+          <span>Actions</span>
+          <span className="text-[10px] opacity-75">
+            ({actionsTaken.size}/{investigateActions.length})
+          </span>
+        </button>
+      </div>
+
+      {/* Desktop Grid Layout & Mobile Active Tab View */}
+      <div className="play-grid-container mt-4">
+        
+        {/* Topology Section */}
+        <div className={`${mobileTab === 'topology' ? 'block' : 'hidden'} md:block mb-4 md:mb-0`}>
+          <Topology
+            topology={attempt.topology}
+            interactive
+            highlightedNodeIds={highlightedNodeIds}
+            pulseNodeId={pulseNodeId}
+          />
+        </div>
+
+        {/* Telemetry Feed Section */}
+        <div className={`${mobileTab === 'telemetry' ? 'block' : 'hidden'} md:block feed bg-[#0A0A0A] border border-neutral-800 rounded-2xl md:rounded-none overflow-hidden shadow-lg`}>
+          <div className="feed-title section-label flex items-center justify-between">
+            <span>Telemetry Signals</span>
+            <span className="text-[11px] font-mono text-neutral-400">
+              {telemetry.length} revealed
+            </span>
+          </div>
           {telemetry.length === 0 ? (
-            <div className="empty">No signals revealed yet — run an investigation action.</div>
+            <div className="empty text-center py-10">
+              No signals revealed yet — run an investigation action below.
+            </div>
           ) : (
-            telemetry.map((event, idx) => (
-              <div className="telemetry" key={`${event.source}-${event.t}-${idx}`}>
-                <time>t+{event.t}s</time>
-                <div>
-                  <span className="source">
-                    {event.source} · {event.type}
-                  </span>
-                  <TelemetryPayload event={event} />
+            <div className="max-h-[460px] overflow-y-auto overscroll-contain divide-y divide-white/5">
+              {telemetry.map((event, idx) => (
+                <div className="telemetry p-3.5 sm:p-4" key={`${event.source}-${event.t}-${idx}`}>
+                  <time className="shrink-0 font-mono text-neutral-500 text-xs">t+{event.t}s</time>
+                  <div className="min-w-0">
+                    <span className="source text-xs font-mono font-bold text-neutral-400">
+                      {event.source} · <span className="text-neutral-500">{event.type}</span>
+                    </span>
+                    <div className="mt-1">
+                      <TelemetryPayload event={event} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
+
       </div>
 
-      {actionError && <div className="form-error" style={{ marginTop: 14 }}>{actionError}</div>}
+      {actionError && <div className="form-error mt-3.5 p-3 rounded-lg bg-red-950/40 border border-red-800 text-red-300 text-xs font-mono">{actionError}</div>}
 
-      <div className="actions">
-        <div className="action-col">
-          <div className="progress-signal">
-            {actionsTaken.size} of {investigateActions.length} signals investigated
-          </div>
-          {investigateActions.map((action) => {
-            const done = actionsTaken.has(action.key);
-            return (
-              <button
-                key={action.key}
-                type="button"
-                className={`action${done ? ' done' : ''}`}
-                disabled={done || pendingKey === action.key || resolving}
-                onClick={() => handleInvestigate(action)}
-              >
-                <span>
-                  {action.label}
-                  <small>{action.description}</small>
-                </span>
-                <span className="mono">
-                  {done ? '✓' : pendingKey === action.key ? '…' : `${action.costSeconds}s`}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        <div className="action-col">
-          {remediateActions.map((action) => (
-            <button
-              key={action.key}
-              type="button"
-              className="action remedy"
-              disabled={resolving}
-              onClick={() => setConfirmRemediation(action)}
-            >
-              <span>
-                {action.label}
-                <small>{action.description}</small>
+      {/* Actions Section */}
+      <div className={`${mobileTab === 'actions' ? 'block' : 'hidden'} md:block mt-4`}>
+        <div className="actions grid grid-cols-1 md:grid-cols-2 bg-[#0A0A0A] border border-neutral-800 rounded-2xl overflow-hidden shadow-lg">
+          
+          {/* Investigation Actions Column */}
+          <div className="action-col p-2 sm:p-3 border-b md:border-b-0 md:border-r border-neutral-800">
+            <div className="flex items-center justify-between px-2 py-2 mb-1">
+              <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold">
+                Investigation Tools
               </span>
-              <span className="mono">{resolving ? '…' : 'Remediate'}</span>
-            </button>
-          ))}
+              <span className="progress-signal text-[11px]">
+                {actionsTaken.size} of {investigateActions.length} run
+              </span>
+            </div>
+            
+            <div className="space-y-1.5">
+              {investigateActions.map((action) => {
+                const done = actionsTaken.has(action.key);
+                return (
+                  <button
+                    key={action.key}
+                    type="button"
+                    className={`action w-full min-h-[52px] p-3 rounded-xl flex items-center justify-between gap-3 text-left transition-all ${
+                      done
+                        ? 'bg-neutral-900/40 border border-neutral-800/60 opacity-60'
+                        : 'bg-[#121214] border border-neutral-800 hover:border-neutral-700 active:scale-[0.98]'
+                    }`}
+                    disabled={done || pendingKey === action.key || resolving}
+                    onClick={() => handleInvestigate(action)}
+                  >
+                    <span className="min-w-0">
+                      <span className="text-xs sm:text-sm font-semibold text-white block truncate">
+                        {action.label}
+                      </span>
+                      <small className="text-[11px] text-neutral-400 block mt-0.5 line-clamp-1">
+                        {action.description}
+                      </small>
+                    </span>
+                    <span className="mono shrink-0 text-xs px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-bold text-neutral-300">
+                      {done ? '✓' : pendingKey === action.key ? '…' : `${action.costSeconds}s`}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Remediation Decisions Column */}
+          <div className="action-col p-2 sm:p-3 bg-[#0d0d0f]">
+            <div className="px-2 py-2 mb-1">
+              <span className="text-xs font-mono uppercase tracking-wider text-[#A3E635] font-semibold flex items-center gap-1.5">
+                <span>⚡ Remediation Choice</span>
+              </span>
+              <span className="text-[10px] text-neutral-500 block mt-0.5">
+                Choosing a fix concludes this incident and locks your final score.
+              </span>
+            </div>
+
+            <div className="space-y-2 mt-1">
+              {remediateActions.map((action) => (
+                <button
+                  key={action.key}
+                  type="button"
+                  className="action remedy w-full min-h-[54px] p-3.5 rounded-xl border border-neutral-700/80 bg-[#141416] hover:border-[#A3E635] hover:bg-[#A3E635]/5 active:scale-[0.98] transition-all flex items-center justify-between gap-3 text-left"
+                  disabled={resolving}
+                  onClick={() => setConfirmRemediation(action)}
+                >
+                  <span className="min-w-0">
+                    <span className="text-xs sm:text-sm font-bold text-white block truncate">
+                      {action.label}
+                    </span>
+                    <small className="text-[11px] text-neutral-400 block mt-0.5 line-clamp-1">
+                      {action.description}
+                    </small>
+                  </span>
+                  <span className="mono shrink-0 text-xs px-3 py-1.5 rounded-lg bg-[#A3E635] text-black font-bold shadow-sm">
+                    {resolving ? '…' : 'Remediate'}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div className="hypothesis">
-        <div className="section-label">
-          Working hypothesis{' '}
-          <span className="mono" style={{ float: 'right', color: 'var(--faint)' }}>
-            {reflectionStatus === 'saving' ? 'Saving…' : reflectionStatus === 'saved' ? 'Saved' : ''}
+      {/* Hypothesis Input Section */}
+      <div className="hypothesis mt-4 p-4 rounded-2xl bg-[#0A0A0A] border border-neutral-800 shadow-lg">
+        <div className="section-label flex items-center justify-between mb-2">
+          <span className="text-xs font-mono uppercase tracking-wider text-neutral-300 font-semibold">
+            Working Hypothesis
+          </span>
+          <span className="mono text-[11px] text-[#A3E635]">
+            {reflectionStatus === 'saving' ? 'Saving…' : reflectionStatus === 'saved' ? 'Saved ✓' : ''}
           </span>
         </div>
         <textarea
+          className="w-full min-h-[90px] p-3 rounded-xl bg-[#121214] border border-neutral-800 text-white text-xs sm:text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#A3E635] transition-colors"
           value={reflection}
           maxLength={REFLECTION_MAX}
           placeholder="What do you think is going on, before you commit to a fix?"
@@ -372,22 +505,44 @@ export default function PlayScreen() {
         />
       </div>
 
+      {/* Centered Modal / Bottom Sheet for Remediation Confirmation */}
       {confirmRemediation && (
-        <div className="confirm-dialog" role="alertdialog" aria-modal="true" aria-label="Confirm remediation">
-          <p>
-            Commit to &ldquo;{confirmRemediation.label}&rdquo;? This ends the incident and locks in your score.
-          </p>
-          <button className="button primary" onClick={() => handleResolve(confirmRemediation)} disabled={resolving}>
-            {resolving ? 'Resolving…' : 'Confirm remediation'}
-          </button>{' '}
-          <button
-            ref={cancelButtonRef}
-            className="button outline"
-            onClick={() => setConfirmRemediation(null)}
-            disabled={resolving}
-          >
-            Cancel
-          </button>
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          role="alertdialog"
+          aria-modal="true"
+          aria-label="Confirm remediation"
+        >
+          <div className="bg-[#121214] border border-neutral-700 p-6 rounded-2xl max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center gap-2.5 text-[#A3E635]">
+              <span className="text-xl">⚠️</span>
+              <h3 className="text-base font-bold text-white font-mono">
+                Confirm Remediation
+              </h3>
+            </div>
+            
+            <p className="text-neutral-300 text-sm leading-relaxed">
+              Commit to <b className="text-white">&ldquo;{confirmRemediation.label}&rdquo;</b>? This will resolve the incident, evaluate your investigation, and lock in your score.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
+              <button
+                className="btn-primary-lime w-full justify-center py-3 text-sm font-bold order-1 sm:order-2"
+                onClick={() => handleResolve(confirmRemediation)}
+                disabled={resolving}
+              >
+                {resolving ? 'Resolving incident…' : 'Yes, Confirm & Resolve'}
+              </button>
+              <button
+                ref={cancelButtonRef}
+                className="button outline w-full justify-center py-2.5 text-sm order-2 sm:order-1"
+                onClick={() => setConfirmRemediation(null)}
+                disabled={resolving}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </main>
