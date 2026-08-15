@@ -57,6 +57,8 @@ export default function PlayScreen() {
   const [reflection, setReflection] = useState('');
   const [reflectionStatus, setReflectionStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [actionError, setActionError] = useState<string | null>(null);
+  const [mobileTab, setMobileTab] = useState<'topology' | 'telemetry' | 'actions'>('actions');
+  const [symptomExpanded, setSymptomExpanded] = useState(false);
 
   // Elapsed time is client-approximated between server round-trips: AttemptStateResponse
   // doesn't carry elapsedSeconds (only TakeActionResponse/ResolveAttemptResponse do), so
@@ -262,9 +264,6 @@ export default function PlayScreen() {
       </main>
     );
   }
-
-  const [mobileTab, setMobileTab] = useState<'topology' | 'telemetry' | 'actions'>('actions');
-  const [symptomExpanded, setSymptomExpanded] = useState(false);
 
   // Staged, not binary: crossing the target costs the time bonus, it doesn't fail the
   // attempt — a hard jump straight to --bad overstates that. Amber past target, red
